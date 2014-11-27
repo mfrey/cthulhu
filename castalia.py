@@ -2,6 +2,7 @@
 
 import os
 from subprocess import call
+from os.path import normpath, basename
 
 import sys
 import argparse
@@ -21,16 +22,19 @@ class Castalia(object):
 
     def run(self):
         environment = dict(os.environ)
+        # probably, a bit to complicated
+        file_to_split =  basename(normpath(self.input_file))
+        cwd = self.input_file.split("/" + file_to_split)[0]
 
         if self.binary.endswith("Castalia"):
-            # FIXME: multiple reasons while this is not cool
-            cwd = self.input_file.split("/omnetpp.ini")[0]
             # DEBUG: print(self.binary + " -i " + self.input_file + " -c " + self.configuration)
             with open(self.log_file_path, 'w') as logfile:
                 call([self.binary, "-i", self.input_file, "-c", self.configuration], env=environment, cwd=cwd, stdout=logfile, stderr=logfile)
         else:
+            # DEBUG: print(self.binary + " -i " + self.input_file + " -s \"" + self.configuration + "\" -o 2")
             with open(self.log_file_path, 'w') as logfile:
-                call([self.binary, "-i", self.input_file, "-s", self.configuration, "-o", "2"], env=environment, cwd=self.cwd, stdout=logfile, stderr=logfile)
+                #call([self.binary, "-i", self.input_file, "-s",  "\"", self.configuration, "\"", "-o", "2"], env=environment, cwd=cwd, stdout=logfile, stderr=logfile)
+                call([self.binary, "-i", self.input_file, "-s", self.configuration, "-o", "2"], env=environment, cwd=cwd, stdout=logfile, stderr=logfile)
 
 def main():
      parser = argparse.ArgumentParser(description='a script for running castalia simulations')

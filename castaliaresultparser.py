@@ -16,6 +16,8 @@ from subprocess import call
 
 from castalia import Castalia
 
+from os.path import normpath, basename
+
 class CastaliaResultParser:
     def __init__(self):
         self.results = {} 
@@ -239,7 +241,9 @@ class CastaliaResultParser:
     def write_result_file(self, pattern, input_file, output_file):
         castalia = Castalia(pattern, input_file)
         castalia.binary += "Results"
-        castalia.log_file_path = os.getcwd() + "/" + output_file
+        file_to_split =  basename(normpath(input_file))
+        cwd = input_file.split("/" + file_to_split)[0]
+        castalia.log_file_path = cwd + "/" + output_file
         castalia.run()
     
     def generate_bar_plot(self, filename, title, xdata, ydata, xlabel, ylabel, labels): 

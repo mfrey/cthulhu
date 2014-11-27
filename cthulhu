@@ -25,8 +25,11 @@ def main():
              castalia.run()
 
      if arguments.plot:    
-         if arguments.configuration != "" and arguments.omnetpp_ini != "":
+         if arguments.configuration != "":
              results = CastaliaResultParser()
+             results.write_result_file("reception", arguments.configuration, "reception.txt")
+#             results.read_multiple_columns("reception.txt")
+#             results.plot_ext("Packet Reception Rate", "packet_reception_rate", "rate", "packet reception rate")
 
 if __name__ == "__main__":
     main()
