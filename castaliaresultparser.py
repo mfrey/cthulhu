@@ -288,6 +288,39 @@ class CastaliaResultParser:
 
         self.generate_line_plot(filename, title, xlist, mean, std, xlabel, ylabel) 
 
+
+ 
+    def generate_packet_reception_rate_plot(self, nodes):
+        xdata = []
+        ydata = []
+        label = []
+
+        for node in xrange(0, nodes):
+            xlist = []
+            ylist = []
+
+#            for key in self.results.keys():
+#                key_size = len(key.split(','))
+
+#                if length == 1:
+
+            for rate in sorted(self.results.keys(), key=int):
+                xlist.append(int(rate))
+                ylist.append(self.results[rate][node])
+
+            xdata.append(xlist)
+            ydata.append(ylist) 
+
+            if node == 0:
+                label.append("1 Node")
+            else:
+                label.append(str(node+1) + " Nodes")
+
+        self.generate_line_plot("packet_reception_rate.png", "Packet Reception Rate (GTS)", xdata, ydata, "Packet Rate", "Packet Reception Rate", label)
+
+
+
+
 class ReportGenerator:
     def __init__(self):
         self.scenarios = {} 

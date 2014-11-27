@@ -28,7 +28,11 @@ def main():
          if arguments.configuration != "":
              results = CastaliaResultParser()
              results.write_result_file("reception", arguments.configuration, "reception.txt")
-#             results.read_multiple_columns("reception.txt")
+             # FIXME
+             directory = "/home/frey/Desktop/Projekte/work/sics/SemInt/Castalia-master/Castalia/Simulations/802154_interference"
+             results.read_multiple_columns(directory + "/" + "reception.txt")
+             print(results.results)
+             results.generate_packet_reception_rate_plot(4)
 #             results.plot_ext("Packet Reception Rate", "packet_reception_rate", "rate", "packet reception rate")
 
 if __name__ == "__main__":
