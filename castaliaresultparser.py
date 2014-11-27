@@ -14,6 +14,8 @@ import matplotlib.pyplot as plt
 import os
 from subprocess import call
 
+from castalia import Castalia
+
 class CastaliaResultParser:
     def __init__(self):
         self.results = {} 
