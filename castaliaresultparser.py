@@ -238,9 +238,10 @@ class CastaliaResultParser:
         figure.savefig(filename)
         self.files.append(filename)
 
-    def write_result_file(self, pattern, input_file, output_file):
+    def write_result_file(self, pattern, input_file, output_file, networks):
         castalia = Castalia(pattern, input_file)
         castalia.binary += "Results"
+        castalia.networks = networks
         file_to_split =  basename(normpath(input_file))
         cwd = input_file.split("/" + file_to_split)[0]
         castalia.log_file_path = cwd + "/" + output_file

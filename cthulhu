@@ -12,6 +12,7 @@ def main():
      parser.add_argument('-c', dest='configuration', type=str, default="", action='store', help='a castalia configuarion to run')
      parser.add_argument('-i', dest='omnetpp_ini', type=str, default="omnetpp.ini", action='store', help='omnetpp.ini file which should be considered')
      parser.add_argument('-p', '--plot', dest='plot', default=False, const=True, action='store_const', help='plot simulation results')
+     parser.add_argument('-n', '--networks', dest='networks', default=False, const=True, action='store_const', help='consider multiple networks in evaluation')
 
      if len(sys.argv) == 1:
          parser.print_help()
@@ -27,7 +28,7 @@ def main():
      if arguments.plot:    
          if arguments.configuration != "":
              results = CastaliaResultParser()
-             results.write_result_file("reception", arguments.configuration, "reception.txt")
+             results.write_result_file("reception", arguments.configuration, "reception.txt", arguments.networks)
              # FIXME
              directory = "/home/frey/Desktop/Projekte/work/sics/SemInt/Castalia-master/Castalia/Simulations/802154_interference"
              results.read_multiple_columns(directory + "/" + "reception.txt")

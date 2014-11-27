@@ -14,6 +14,7 @@ class Castalia(object):
         self.cwd = os.getcwd()
         self.configuration = configuration
         self.input_file = input_file
+        self.networks = False
 
         if os.path.exists(self.binary) == False:
             raise Exception("The castalia binary could not be found at " + self.binary)
@@ -34,7 +35,10 @@ class Castalia(object):
             # DEBUG: print(self.binary + " -i " + self.input_file + " -s \"" + self.configuration + "\" -o 2")
             with open(self.log_file_path, 'w') as logfile:
                 #call([self.binary, "-i", self.input_file, "-s",  "\"", self.configuration, "\"", "-o", "2"], env=environment, cwd=cwd, stdout=logfile, stderr=logfile)
-                call([self.binary, "-i", self.input_file, "-s", self.configuration, "-o", "2"], env=environment, cwd=cwd, stdout=logfile, stderr=logfile)
+                if self.networks:
+                    call([self.binary, "-i", self.input_file, "-s", self.configuration, "-n", "-o", "2"], env=environment, cwd=cwd, stdout=logfile, stderr=logfile)
+                else:
+                    call([self.binary, "-i", self.input_file, "-s", self.configuration, "-o", "2"], env=environment, cwd=cwd, stdout=logfile, stderr=logfile)
 
 def main():
      parser = argparse.ArgumentParser(description='a script for running castalia simulations')
