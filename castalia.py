@@ -7,7 +7,7 @@ import sys
 import argparse
 
 class Castalia(object):
-    def __init__(self, configuration, castalia_installation = "/home/frey/Desktop/Projekte/work/sics/SemInt/Castalia-master/Castalia/", input_file="omnetpp.ini"):
+    def __init__(self, configuration, input_file, castalia_installation = "/home/frey/Desktop/Projekte/work/sics/SemInt/Castalia-master/Castalia/"):
         self.castalia_installation = castalia_installation
         self.binary = self.castalia_installation + '/bin/Castalia'
         self.cwd = os.getcwd()
@@ -23,8 +23,11 @@ class Castalia(object):
         environment = dict(os.environ)
 
         if self.binary.endswith("Castalia"):
+            # FIXME: multiple reasons while this is not cool
+            cwd = self.input_file.split("/omnetpp.ini")[0]
+            # DEBUG: print(self.binary + " -i " + self.input_file + " -c " + self.configuration)
             with open(self.log_file_path, 'w') as logfile:
-                call([self.binary, "-i", self.input_file, "-c", self.configuration], env=environment, cwd=self.cwd, stdout=logfile, stderr=logfile)
+                call([self.binary, "-i", self.input_file, "-c", self.configuration], env=environment, cwd=cwd, stdout=logfile, stderr=logfile)
         else:
             with open(self.log_file_path, 'w') as logfile:
                 call([self.binary, "-i", self.input_file, "-s", self.configuration, "-o", "2"], env=environment, cwd=self.cwd, stdout=logfile, stderr=logfile)
