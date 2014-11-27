@@ -31,7 +31,6 @@ class Castalia(object):
 
 def main():
      parser = argparse.ArgumentParser(description='a script for running castalia simulations')
-     parser.add_argument('-r', '--run', dest='run', default=False, const=True, action='store_const', help='run simulations')
      parser.add_argument('-c', dest='configuration', type=str, default="", action='store', help='a castalia configuarion to run')
      parser.add_argument('-i', dest='omnetpp_ini', type=str, default="omnetpp.ini", action='store', help='omnetpp.ini file which should be considered')
 
@@ -41,7 +40,7 @@ def main():
 
      arguments = parser.parse_args()
 
-     if arguments.run == True:
+     if arguments.configuration != "" and arguments.omnetpp_ini != "":
          castalia = Castalia(arguments.configuration, arguments.omnetpp_ini)
          castalia.run()
 
