@@ -327,11 +327,8 @@ class ReportGenerator:
 
 
 def main():
-     parser = argparse.ArgumentParser(description='cthulhu - a script for running and evaluating castalia simulations')
-     parser.add_argument('-r', '--run', dest='run', default=False, const=True, action='store_const', help='run simulations')
-     parser.add_argument('-c', dest='configuration', type=str, default="", action='store', help='a castalia configuarion to run')
-     parser.add_argument('-i', dest='omnetpp_ini', type=str, default="omnetpp.ini", action='store', help='omnetpp.ini file which should be considered')
-     parser.add_argument('-p', '--plot', dest='plot', default=False, const=True, action='store_const', help='plot simulation results')
+     parser = argparse.ArgumentParser(description='a script for evaluating castalia simulations')
+     parser.add_argument('-c', dest='configuration', type=str, default="", action='store', help='a castalia configuarion to evaluate')
 
      if len(sys.argv) == 1:
          parser.print_help()
@@ -339,29 +336,25 @@ def main():
 
      arguments = parser.parse_args()
 
-     if arguments.run == True:
-         castalia = Castalia(arguments.configuration, arguments.omnetpp_ini)
-         castalia.run()
-
-     if arguments.plot == True:
+     if arguments.configuration != "":
          results = CastaliaResultParser()
-         results.write_result_file("application level", arguments.omnetpp_ini, "application.txt")
+         results.write_result_file("application level", arguments.configuration, "application.txt")
          results.read_multiple_columns("application.txt")
          results.plot_histogram()
 
-         results.write_result_file("average latency", arguments.omnetpp_ini, "latency.txt")
+         results.write_result_file("average latency", arguments.configuration, "latency.txt")
          results.read_multiple_columns("latency.txt")
          results.plot("Average Latency", "average_latency", "rate", "latency")
 
-         results.write_result_file("Packets received", arguments.omnetpp_ini, "received.txt")
+         results.write_result_file("Packets received", arguments.configuration, "received.txt")
          results.read_multiple_columns("received.txt")
          results.plot_ext("Received Packets", "received_packets", "rate", "packets")
     
-         results.write_result_file("Packets reception rate", arguments.omnetpp_ini, "reception.txt")
+         results.write_result_file("Packets reception rate", arguments.configuration, "reception.txt")
          results.read_multiple_columns("reception.txt")
          results.plot_ext("Packet Reception Rate", "packet_reception_rate", "rate", "packet reception rate")
 
-         results.write_result_file("Packet breakdown", arguments.omnetpp_ini, "breakdown.txt")
+         results.write_result_file("Packet breakdown", arguments.configuration, "breakdown.txt")
          results.read_breakdown_packets("breakdown.txt")
          results.plot_breakdown_packets()
 
