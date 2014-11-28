@@ -221,6 +221,7 @@ class CastaliaResultParser:
                 plt.plot(value, ylist[index], drawstyle="line", lw=2.5, color="#003366")
 
         plt.title(title)
+        plt.legend()
         axis.set_xlabel(xlabel)
         axis.set_ylabel(ylabel)
         plt.grid()
@@ -291,35 +292,54 @@ class CastaliaResultParser:
 
 
  
-    def generate_packet_reception_rate_plot(self, nodes):
+    def _flat_data(self, nodes):
+        result = {}
+
+        for key in self.results.keys():
+            rate = key.split(',')[0]
+
+            if rate not in result.keys():
+                result[rate] = {}
+
+                for node in xrange(0, nodes):
+                    result[rate][node] = []
+
+            data = self.results[key]
+            node = data.index(max(data))
+
+            result[rate][node].append(self.results[key][node])
+
+        self.results = result
+
+
+    def generate_packet_reception_rate_plot(self, nodes, network):
         xdata = []
         ydata = []
         label = []
+
+        # remove sender from result data
+        self._flat_data(nodes)
 
         for node in xrange(0, nodes):
             xlist = []
             ylist = []
 
-#            for key in self.results.keys():
-#                key_size = len(key.split(','))
-
-#                if length == 1:
-
             for rate in sorted(self.results.keys(), key=int):
-                xlist.append(int(rate))
+                xlist.append(rate)
                 ylist.append(self.results[rate][node])
 
             xdata.append(xlist)
             ydata.append(ylist) 
 
-            if node == 0:
-                label.append("1 Node")
+            if network:
+                label.append("PAN$_{" + str(node) + "}$")
             else:
-                label.append(str(node+1) + " Nodes")
+               if node == 0:
+                   label.append("1 Node")
+               else:
+                   label.append(str(node+1) + " Nodes")
 
-        self.generate_line_plot("packet_reception_rate.png", "Packet Reception Rate (GTS)", xdata, ydata, "Packet Rate", "Packet Reception Rate", label)
-
-
+        self.generate_line_plot("packet_reception_rate.png", "Packet Reception Rate", xdata, ydata, "Packet Rate", "Packet Reception Rate", label)
 
 
 class ReportGenerator:
