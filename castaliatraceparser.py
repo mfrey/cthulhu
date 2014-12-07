@@ -62,7 +62,7 @@ class CastaliaTraceParser:
                 ylist.append(ydata)
 
             current_filename = "arrival_plot-" + str(rate) + ".png"
-            title = "Aehm"
+            title = "Packet Arrival Time"
             figure, axis = plt.subplots(1)
 
             fig = matplotlib.pyplot.gcf()
@@ -70,7 +70,7 @@ class CastaliaTraceParser:
 
             for index, value in enumerate(xlist):
                 if len(xlist) > 1:
-                    plt.plot(value, ylist[index], drawstyle="line", lw=2.5)
+                    plt.plot(value, ylist[index], drawstyle="line", lw=2.5, label="PAN$_"+str(index)+"$")
                 else:
                     plt.plot(value, ylist[index], drawstyle="line", lw=2.5, color="#003366")
 
@@ -79,6 +79,9 @@ class CastaliaTraceParser:
             #axis.set_title(title)
             #axis.set_xlabel(xlabel)
             #axis.set_ylabel(ylabel)
+            plt.xlabel("Time")
+            plt.ylabel("Squence Number")
+            plt.legend(loc=0)
             axis.grid()
             figure.savefig(current_filename, dpi=100)
             plt.close()
