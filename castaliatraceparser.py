@@ -81,6 +81,8 @@ class CastaliaTraceParser:
                 if len(xlist) > 1:
                     plt.plot(value, ylist[index], linestyle=' ', marker='o', label="PAN$_"+str(index)+"$")
                     #plt.plot(value, ylist[index], drawstyle="line", lw=2.5, label="PAN$_"+str(index)+"$")
+                    if flag:
+                        plt.yticks([0,1,2,3])
                 else:
                     plt.plot(value, ylist[index], drawstyle="line", lw=2.5, color="#003366")
 
