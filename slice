@@ -1,0 +1,56 @@
+#!/usr/bin/env python2.7
+
+import sys
+import argparse
+
+
+class Slice:
+    def process(self, filename):
+        counter = 0
+        output = ""
+        start = True
+        rates = []
+
+        with open(filename, "r") as filehandle:
+            for line in filehandle:
+                if "packet rate is" in line:
+                    rate = float(line.split(" ")[-1])
+
+                    if rate > 0 and rate not in rates:
+                        rates.append(rate)
+
+                    if rate == 0 and len(rates) > 0:
+                        self._write_file(filename, rates.pop(), output)
+                        output = ""
+
+                output += line
+
+#        self._write_file(filename, rates.pop(), output)
+
+
+    def _write_file(self, filename, rate, data):
+#        print(rate)
+        rate = str(rate).split(".")[0]
+        output_filename = filename.split(".txt")[0] + "_" + rate + ".txt"
+#        print(output_filename)
+
+        with open(output_filename, "w") as outputfilehandle:
+            outputfilehandle.write(data)
+
+
+def main():
+    parser = argparse.ArgumentParser(description='slice - a script for slicing castalia trace files')
+    parser.add_argument('-f', '--file', dest='trace', type=str, default="", action='store', help='a castalia trace file to slice')
+    
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
+
+    arguments = parser.parse_args()
+
+    if arguments.trace != "":
+       inst = Slice()
+       inst.process(arguments.trace)
+
+if __name__ == "__main__":
+    main()
