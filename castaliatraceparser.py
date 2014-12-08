@@ -45,7 +45,7 @@ class CastaliaTraceParser:
             self.results[rate][node][timestamp] = seqnr
 
 
-    def plot(self, flag=False, start=0, stop=0):
+    def plot(self, flag=False, start=0, stop=0, file_name="arrival_plot-"):
         for rate in sorted(self.results.keys(), key=int):
             xlist = []
             ylist = []
@@ -70,7 +70,7 @@ class CastaliaTraceParser:
                 xlist.append(xdata)
                 ylist.append(ydata)
 
-            current_filename = "arrival_plot-" + str(rate) + ".png"
+            current_filename = file_name + str(rate) + ".png"
             title = "Packet Arrival Time"
             figure, axis = plt.subplots(1)
 
@@ -120,7 +120,7 @@ def main():
        # the timestamp should be in a t_0,t_1 format, e.g. 0.5,0.7
        if arguments.timestamps != '':
            start, stop = [float(timestamp) for timestamp in arguments.timestamps.split(",")]
-           trace_parser.plot(arguments.dots, start, stop)
+           trace_parser.plot(arguments.dots, start, stop, "arrival-rate-dotted")
        else:
            trace_parser.plot(arguments.dots)
 
