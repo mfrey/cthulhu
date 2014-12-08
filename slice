@@ -25,14 +25,10 @@ class Slice:
 
                 output += line
 
-#        self._write_file(filename, rates.pop(), output)
-
 
     def _write_file(self, filename, rate, data):
-#        print(rate)
         rate = str(rate).split(".")[0]
         output_filename = filename.split(".txt")[0] + "_" + rate + ".txt"
-#        print(output_filename)
 
         with open(output_filename, "w") as outputfilehandle:
             outputfilehandle.write(data)
