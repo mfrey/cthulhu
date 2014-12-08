@@ -44,7 +44,8 @@ class CastaliaTraceParser:
 
             self.results[rate][node][timestamp] = seqnr
 
-    def plot(self, flag=True, start=0, stop=0):
+
+    def plot(self, flag=False, start=0, stop=0):
         for rate in sorted(self.results.keys(), key=int):
             xlist = []
             ylist = []
@@ -62,9 +63,9 @@ class CastaliaTraceParser:
                         xdata.append(timestamp)
 
                         if flag:
-                            ydata.append(self.results[rate][node][timestamp])
-                        else:
                             ydata.append(node + 1)
+                        else:
+                            ydata.append(self.results[rate][node][timestamp])
 
                 xlist.append(xdata)
                 ylist.append(ydata)
@@ -102,6 +103,7 @@ def main():
     parser = argparse.ArgumentParser(description='a script for evaluating castalia trace files')
     parser.add_argument('-f', '--file', dest='trace', type=str, default="", action='store', help='a castalia trace file to evaluate')
     parser.add_argument('-t', dest='timestamps', type=str, default="", action='store', help='a beginning and ending timestamp for evaluating the trace file, e.g. 0.5,1.0')
+    parser.add_argument('-r', dest='rate', type=str, default="", action='store', help='analyze only a specific rate')
     # TODO: find a better name
     parser.add_argument('-d', dest='dots', default=False, const=True, action='store_const', help='enable dots figure')
     
