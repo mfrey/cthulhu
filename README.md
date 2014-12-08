@@ -29,3 +29,7 @@ If there is more than one network active in a simulation result, you have to spe
 ```
 ./cthulu -p -c /full/path/to/resultfile.txt -n
 ```
+You can also run several parts of the tool independtly, e.g. the castalia trace parser
+```
+./castaliatraceparser.py --file /path/to/tracefile -t 1.017,10.017
+```
