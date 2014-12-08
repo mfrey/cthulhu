@@ -1,5 +1,8 @@
 #!/usr/bin/env python2.7
 
+import sys
+import argparse
+
 import numpy as np
 
 import matplotlib
@@ -32,7 +35,6 @@ class CastaliaTraceParser:
 
     def _parse_line(self, line, rate):
         if "Received packet" in line:
-
             node = int(line.split("SN.node[")[1].split("]")[0])
             timestamp = float(line.split("SN")[0])
             seqnr = int(line.split(" ")[-4][1:])
@@ -42,7 +44,7 @@ class CastaliaTraceParser:
 
             self.results[rate][node][timestamp] = seqnr
 
-    def plot(self, flag=True):
+    def plot(self, flag=True, start=0, stop=0):
         for rate in sorted(self.results.keys(), key=int):
             xlist = []
             ylist = []
@@ -52,11 +54,15 @@ class CastaliaTraceParser:
                 ydata = []
 
                 for timestamp in sorted(self.results[rate][node], key=float): 
-                    xdata.append(timestamp)
-                    if flag:
-                        ydata.append(self.results[rate][node][timestamp])
-                    else:
-                        ydata.append(node + 1)
+                    if start != 0 and stop != 0:
+                        # add check for sane intervals
+                        if timestamp > start and timestamp < stop:
+                            xdata.append(timestamp)
+
+                            if flag:
+                                ydata.append(self.results[rate][node][timestamp])
+                            else:
+                                ydata.append(node + 1)
 
                 xlist.append(xdata)
                 ylist.append(ydata)
@@ -65,12 +71,13 @@ class CastaliaTraceParser:
             title = "Packet Arrival Time"
             figure, axis = plt.subplots(1)
 
-            fig = matplotlib.pyplot.gcf()
-            fig.set_size_inches(38.5,10.5)
+#            fig = matplotlib.pyplot.gcf()
+#            fig.set_size_inches(38.5,10.5)
 
             for index, value in enumerate(xlist):
                 if len(xlist) > 1:
-                    plt.plot(value, ylist[index], drawstyle="line", lw=2.5, label="PAN$_"+str(index)+"$")
+                    plt.plot(value, ylist[index], linestyle=' ', marker='o', label="PAN$_"+str(index)+"$")
+                    #plt.plot(value, ylist[index], drawstyle="line", lw=2.5, label="PAN$_"+str(index)+"$")
                 else:
                     plt.plot(value, ylist[index], drawstyle="line", lw=2.5, color="#003366")
 
@@ -89,9 +96,29 @@ class CastaliaTraceParser:
 
 
 def main():
-    parser = CastaliaTraceParser()
-    parser.read("/home/frey/Desktop/Projekte/work/sics/SemInt/Castalia-master/Castalia/Simulations/802154_interference/Castalia-Trace.txt")
-    parser.plot()
+    parser = argparse.ArgumentParser(description='a script for evaluating castalia trace files')
+    parser.add_argument('-f', '--file', dest='trace', type=str, default="", action='store', help='a castalia trace file to evaluate')
+    parser.add_argument('-t', dest='timestamps', type=str, default="", action='store', help='a beginning and ending timestamp for evaluating the trace file')
+    # TODO: find a better name
+    parser.add_argument('-d', dest='dots', default=False, const=True, action='store_const', help='enable dots figure')
+    
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
+
+    arguments = parser.parse_args()
+
+    if arguments.trace != "":
+       trace_parser = CastaliaTraceParser()
+       trace_parser.read(arguments.trace)
+
+       # the timestamp should be in a t_0,t_1 format, e.g. 0.5,0.7
+       if arguments.timestamps != '':
+           start, stop = [float(timestamp) for timestamp in arguments.timestamps.split(",")]
+           trace_parser.plot(arguments.dots, start, stop)
+       else:
+           trace_parser.plot(arguments.dots)
+
 
 if __name__ == "__main__":
     main()
