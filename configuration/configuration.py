@@ -1,13 +1,13 @@
 #!/usr/bin/env python2.7
 
 from os import path
-from configparser import ConfigParser, NoSectionError, NoOptionError
+import ConfigParser
 
 class Configuration(object):
     def __init__(self, file_name):
 
         if(file_name is not None):
-            self.parser = ConfigParser()
+            self.parser = ConfigParser.ConfigParser()
             self.parser.read(file_name)
 
             self.settings = {
@@ -19,3 +19,6 @@ class Configuration(object):
 
     def _get_absolute_path(self, some_path):
         return path.abspath(path.expanduser(some_path))
+
+    def _get(self, section, option):
+        return  self.parser.get(section, option)

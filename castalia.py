@@ -1,16 +1,20 @@
 #!/usr/bin/env python2.7
 
 import os
+
 from subprocess import call
-from os.path import normpath, basename
+
+from os.path import normpath, basename, expanduser
 
 import sys
 import argparse
 
+from configuration.configuration import Configuration
+
 class Castalia(object):
-    def __init__(self, configuration, input_file, castalia_installation = "/home/frey/Desktop/Projekte/work/sics/SemInt/Castalia-master/Castalia/"):
+    def __init__(self, configuration, input_file, castalia_installation):
         self.castalia_installation = castalia_installation
-        self.binary = self.castalia_installation + '/bin/Castalia'
+        self.binary = self.castalia_installation + "/bin/Castalia"
         self.cwd = os.getcwd()
         self.configuration = configuration
         self.input_file = input_file
@@ -42,7 +46,8 @@ class Castalia(object):
 
 def main():
      parser = argparse.ArgumentParser(description='a script for running castalia simulations')
-     parser.add_argument('-c', dest='configuration', type=str, default="", action='store', help='a castalia configuarion to run')
+     parser.add_argument('-c', dest='configuration', type=str, default="", action='store', help='an ini file specifying the location of castalia')
+     parser.add_argument('-s', dest='castalia_configuration', type=str, default="", action='store', help='a castalia configuarion to run')
      parser.add_argument('-i', dest='omnetpp_ini', type=str, default="omnetpp.ini", action='store', help='omnetpp.ini file which should be considered')
 
      if len(sys.argv) == 1:
@@ -50,10 +55,12 @@ def main():
          sys.exit(1)
 
      arguments = parser.parse_args()
+     configuration = Configuration(arguments.configuration)
 
-     if arguments.configuration != "" and arguments.omnetpp_ini != "":
-         castalia = Castalia(arguments.configuration, arguments.omnetpp_ini)
+     if arguments.castalia_configuration != "" and arguments.omnetpp_ini != "":
+         castalia = Castalia(arguments.castalia_configuration, arguments.omnetpp_ini, configuration.settings["castalia_home"])
          castalia.run()
+
 
 if __name__ == "__main__":
     main()
