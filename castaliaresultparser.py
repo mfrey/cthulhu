@@ -239,8 +239,8 @@ class CastaliaResultParser:
         figure.savefig(filename)
         self.files.append(filename)
 
-    def write_result_file(self, pattern, input_file, output_file, networks):
-        castalia = Castalia(pattern, input_file)
+    def write_result_file(self, pattern, input_file, output_file, networks, location):
+        castalia = Castalia(pattern, input_file, location)
         castalia.binary += "Results"
         castalia.networks = networks
         file_to_split =  basename(normpath(input_file))
@@ -310,6 +310,7 @@ class CastaliaResultParser:
             result[rate][node].append(self.results[key][node])
 
         self.results = result
+        print(self.results)
 
 
     def generate_packet_reception_rate_plot(self, nodes, network):
@@ -318,7 +319,7 @@ class CastaliaResultParser:
         label = []
 
         # remove sender from result data
-        self._flat_data(nodes)
+        #self._flat_data(nodes)
 
         for node in xrange(0, nodes):
             xlist = []
@@ -339,6 +340,8 @@ class CastaliaResultParser:
                else:
                    label.append(str(node+1) + " Nodes")
 
+        print xdata
+        print ydata
         self.generate_line_plot("packet_reception_rate.png", "Packet Reception Rate", xdata, ydata, "Packet Rate", "Packet Reception Rate", label)
 
 

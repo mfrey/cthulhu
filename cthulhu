@@ -3,13 +3,16 @@
 import sys
 import argparse
 
+from configuration.configuration import Configuration
+
 from castalia import Castalia
 from castaliaresultparser import CastaliaResultParser
 
 def main():
      parser = argparse.ArgumentParser(description='a script for running and evaluating castalia simulations')
      parser.add_argument('-r', '--run', dest='run', default=False, const=True, action='store_const', help='run simulations')
-     parser.add_argument('-c', dest='configuration', type=str, default="", action='store', help='a castalia configuarion to run')
+     parser.add_argument('-c', dest='configuration', type=str, default="", action='store', help='a configuration file for cthulhu')
+     parser.add_argument('-s', dest='scenario', type=str, default="", action='store', help='a castalia scenarioto run')
      parser.add_argument('-i', dest='omnetpp_ini', type=str, default="omnetpp.ini", action='store', help='omnetpp.ini file which should be considered')
      parser.add_argument('-p', '--plot', dest='plot', default=False, const=True, action='store_const', help='plot simulation results')
      parser.add_argument('-n', '--networks', dest='networks', default=False, const=True, action='store_const', help='consider multiple networks in evaluation')
@@ -19,21 +22,22 @@ def main():
          sys.exit(1)
 
      arguments = parser.parse_args()
-     
+     configuration = Configuration(arguments.configuration)
+
      if arguments.run:
          if arguments.configuration != "" and arguments.omnetpp_ini != "":
-             castalia = Castalia(arguments.configuration, arguments.omnetpp_ini)
+             castalia = Castalia(arguments.scenario, arguments.omnetpp_ini, configuration.settings["castalia_home"])
              castalia.run()
 
      if arguments.plot:    
          if arguments.configuration != "":
              results = CastaliaResultParser()
-             results.write_result_file("reception", arguments.configuration, "reception.txt", arguments.networks)
+             results.write_result_file("reception", arguments.scenario, "reception.txt", arguments.networks, configuration.settings["castalia_home"])
              # FIXME
              directory = "/home/frey/Desktop/Projekte/work/sics/SemInt/Castalia-master/Castalia/Simulations/802154_interference"
              results.read_multiple_columns(directory + "/" + "reception.txt")
              print(results.results)
-             results.generate_packet_reception_rate_plot(2, arguments.networks)
+             results.generate_packet_reception_rate_plot(4, arguments.networks)
 #             results.plot_ext("Packet Reception Rate", "packet_reception_rate", "rate", "packet reception rate")
 
 if __name__ == "__main__":

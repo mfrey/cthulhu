@@ -63,14 +63,14 @@ class CastaliaTraceParser:
                         xdata.append(timestamp)
 
                         if flag:
-                            ydata.append(node + 1)
+                            ydata.append(node)
                         else:
                             ydata.append(self.results[rate][node][timestamp])
 
                 xlist.append(xdata)
                 ylist.append(ydata)
 
-            current_filename = file_name + str(rate) + ".png"
+            current_filename = file_name + "_" + str(rate) + ".png"
             title = "Packet Arrival Time"
             figure, axis = plt.subplots(1)
 
@@ -82,7 +82,10 @@ class CastaliaTraceParser:
                     plt.plot(value, ylist[index], linestyle=' ', marker='o', label="PAN$_"+str(index)+"$")
                     #plt.plot(value, ylist[index], drawstyle="line", lw=2.5, label="PAN$_"+str(index)+"$")
                     if flag:
-                        plt.yticks([0,1,2,3])
+                        plt.yticks([-1, 0,1,2])
+                        plt.ylabel("Network")
+                    else:
+                        plt.ylabel("Squence Number")
                 else:
                     plt.plot(value, ylist[index], drawstyle="line", lw=2.5, color="#003366")
 
@@ -92,7 +95,6 @@ class CastaliaTraceParser:
             #axis.set_xlabel(xlabel)
             #axis.set_ylabel(ylabel)
             plt.xlabel("Time")
-            plt.ylabel("Squence Number")
             plt.legend(loc=0)
             axis.grid()
             figure.savefig(current_filename, dpi=100)
@@ -119,10 +121,15 @@ def main():
        trace_parser = CastaliaTraceParser()
        trace_parser.read(arguments.trace)
 
+       if arguments.dots == True:
+           file_name = "arrival-rate-dotted"
+       else:
+           file_name = "arrival-rate"
+
        # the timestamp should be in a t_0,t_1 format, e.g. 0.5,0.7
        if arguments.timestamps != '':
            start, stop = [float(timestamp) for timestamp in arguments.timestamps.split(",")]
-           trace_parser.plot(arguments.dots, start, stop, "arrival-rate-dotted")
+           trace_parser.plot(arguments.dots, start, stop, file_name)
        else:
            trace_parser.plot(arguments.dots)
 
