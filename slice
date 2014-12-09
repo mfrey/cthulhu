@@ -6,9 +6,7 @@ import argparse
 
 class Slice:
     def process(self, filename):
-        counter = 0
         output = ""
-        start = True
         rates = []
 
         with open(filename, "r") as filehandle:
