@@ -1,6 +1,7 @@
 #!/usr/bin/env python2.7
 
 import sys
+import os.path
 import argparse
 
 import numpy as np
@@ -9,6 +10,8 @@ import matplotlib
 matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
+
+from configuration.configuration import Configuration
 
 class CastaliaTraceParser:
     def __init__(self):
@@ -105,9 +108,10 @@ class CastaliaTraceParser:
 
 def main():
     parser = argparse.ArgumentParser(description='a script for evaluating castalia trace files')
-    parser.add_argument('-f', '--file', dest='trace', type=str, default="", action='store', help='a castalia trace file to evaluate')
+    parser.add_argument('-c', '--configuration', dest='configuration', type=str, default="settings.ini", action='store', help='a cthulhu configuration file')
+    parser.add_argument('-f', '--file', dest='trace', type=str, default="Castalia-Trace.txt", action='store', help='a castalia trace file to evaluate')
     parser.add_argument('-t', dest='timestamps', type=str, default="", action='store', help='a beginning and ending timestamp for evaluating the trace file, e.g. 0.5,1.0')
-    parser.add_argument('-r', dest='rate', type=str, default="", action='store', help='analyze only a specific rate')
+    # parser.add_argument('-r', dest='rate', type=str, default="", action='store', help='analyze only a specific rate')
     # TODO: find a better name
     parser.add_argument('-d', dest='dots', default=False, const=True, action='store_const', help='enable dots figure')
     
@@ -116,6 +120,10 @@ def main():
         sys.exit(1)
 
     arguments = parser.parse_args()
+
+    if os.path.isfile(arguments.configuration):
+        configuration = Configuration("settings.ini")
+        arguments.trace = configuration.settings["scenario_home"] + "/" + arguments.trace
 
     if arguments.trace != "":
        trace_parser = CastaliaTraceParser()

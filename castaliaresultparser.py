@@ -221,7 +221,7 @@ class CastaliaResultParser:
                 plt.plot(value, ylist[index], drawstyle="line", lw=2.5, color="#003366")
 
         plt.title(title)
-        plt.legend()
+        plt.legend(loc=0)
         axis.set_xlabel(xlabel)
         axis.set_ylabel(ylabel)
         plt.grid()
@@ -319,7 +319,8 @@ class CastaliaResultParser:
         label = []
 
         # remove sender from result data
-        #self._flat_data(nodes)
+        if network:
+            self._flat_data(nodes)
 
         for node in xrange(0, nodes):
             xlist = []

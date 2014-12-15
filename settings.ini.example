@@ -1,2 +1,3 @@
 [General]
 castalia_home = /home/frey/Desktop/Projekte/work/sics/SemInt/Castalia-master/Castalia
+scenario_home = /home/frey/Desktop/Projekte/work/sics/SemInt/Castalia-master/Castalia/Simulations/802154_interference/

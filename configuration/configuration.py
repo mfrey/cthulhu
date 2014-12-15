@@ -12,6 +12,7 @@ class Configuration(object):
 
             self.settings = {
                 'castalia_home': self._get_absolute_path(self._get('General', 'castalia_home')),
+                'scenario_home': self._get_absolute_path(self._get('General', 'scenario_home')),
             }
 
         else:
