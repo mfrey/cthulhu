@@ -16,6 +16,10 @@ from configuration.configuration import Configuration
 class CastaliaTraceParser:
     def __init__(self):
         self.results = {}
+        # pan_id -> nodes
+       # self.pans = {}
+
+        #self.association_time = {} 
 
     def read(self, filename):
         counter = 0
@@ -31,21 +35,35 @@ class CastaliaTraceParser:
                        self.results[rate] = {}
                        counter = 0
                        print(".")
-
                 else:
                     self._parse_line(line, rate)
 
 
     def _parse_line(self, line, rate):
+        node = int(line.split("SN.node[")[1].split("]")[0])
+        timestamp = float(line.split("SN")[0])
+
         if "Received packet" in line:
-            node = int(line.split("SN.node[")[1].split("]")[0])
-            timestamp = float(line.split("SN")[0])
             seqnr = int(line.split(" ")[-4][1:])
 
             if node not in self.results[rate].keys():
                 self.results[rate][node] = {}
 
             self.results[rate][node][timestamp] = seqnr
+
+       # elif "Lost synchronisation" in line:
+       #     pan_identifier = int(line.split(" ")[-1])
+
+       #     if pan_identifier not in self.pans.keys():
+       #         self.pans[pan_identifier] = []
+
+       #     if node not in self.pans[pan_identifier]:
+       #         self.pans[pan_identifier]
+       #        
+
+       #     if node not in self.results[rate].keys():
+       #         self.association_time[rate][node] = {}
+            # 3319366:203.501130399999SN.node[3].Communication.MAC             Lost synchronisation with PAN 1
 
 
     def plot(self, flag=False, start=0, stop=0, file_name="arrival_plot-"):
@@ -122,7 +140,7 @@ def main():
     arguments = parser.parse_args()
 
     if os.path.isfile(arguments.configuration):
-        configuration = Configuration("settings.ini")
+        configuration = Configuration(arguments.configuration)
         arguments.trace = configuration.settings["scenario_home"] + "/" + arguments.trace
 
     if arguments.trace != "":
