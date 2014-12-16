@@ -1,12 +1,17 @@
 #!/usr/bin/env python2.7
 
+import sys
 from os import path
 import ConfigParser
 
 class Configuration(object):
     def __init__(self, file_name):
+        if (file_name is not None):
 
-        if(file_name is not None):
+            if not os.path.isfile(file_name):
+                print("could not read configuration " + file_name)
+                sys.exit(1)
+
             self.parser = ConfigParser.ConfigParser()
             self.parser.read(file_name)
 

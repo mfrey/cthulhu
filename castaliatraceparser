@@ -138,10 +138,8 @@ def main():
         sys.exit(1)
 
     arguments = parser.parse_args()
-
-    if os.path.isfile(arguments.configuration):
-        configuration = Configuration(arguments.configuration)
-        arguments.trace = configuration.settings["scenario_home"] + "/" + arguments.trace
+    configuration = Configuration(arguments.configuration)
+    arguments.trace = configuration.settings["scenario_home"] + "/" + arguments.trace
 
     if arguments.trace != "":
        trace_parser = CastaliaTraceParser()

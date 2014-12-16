@@ -11,7 +11,7 @@ from castaliaresultparser import CastaliaResultParser
 def main():
      parser = argparse.ArgumentParser(description='a script for running and evaluating castalia simulations')
      parser.add_argument('-r', '--run', dest='run', default=False, const=True, action='store_const', help='run simulations')
-     parser.add_argument('-c', dest='configuration', type=str, default="", action='store', help='a configuration file for cthulhu')
+     parser.add_argument('-c', dest='configuration', type=str, default="settings.ini", action='store', help='a configuration file for cthulhu')
      parser.add_argument('-s', dest='scenario', type=str, default="", action='store', help='a castalia scenarioto run')
      parser.add_argument('-i', dest='omnetpp_ini', type=str, default="omnetpp.ini", action='store', help='omnetpp.ini file which should be considered')
      parser.add_argument('-p', '--plot', dest='plot', default=False, const=True, action='store_const', help='plot simulation results')
@@ -23,6 +23,7 @@ def main():
 
      arguments = parser.parse_args()
      configuration = Configuration(arguments.configuration)
+     arguments.trace = configuration.settings["scenario_home"] + "/" + arguments.trace
 
      if arguments.run:
          if arguments.configuration != "" and arguments.omnetpp_ini != "":
