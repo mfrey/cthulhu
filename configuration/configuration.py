@@ -1,7 +1,8 @@
 #!/usr/bin/env python2.7
 
-import sys
+import os
 from os import path
+import sys
 import ConfigParser
 
 class Configuration(object):
