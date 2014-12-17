@@ -20,6 +20,7 @@ class CastaliaTraceParser:
        # self.pans = {}
 
         #self.association_time = {} 
+        self.sent_packets = {}
 
     def read(self, filename):
         counter = 0
@@ -33,6 +34,7 @@ class CastaliaTraceParser:
                     if counter == 3:
                        rate = float(line.split(" ")[-1])
                        self.results[rate] = {}
+                       self.sent_packets[rate] = {}
                        counter = 0
                        print(".")
                 else:
@@ -40,16 +42,26 @@ class CastaliaTraceParser:
 
 
     def _parse_line(self, line, rate):
-        node = int(line.split("SN.node[")[1].split("]")[0])
-        timestamp = float(line.split("SN")[0])
 
-        if "Received packet" in line:
+        if "Received packet #" in line:
+            node = int(line.split("SN.node[")[1].split("]")[0])
+            timestamp = float(line.split("SN")[0])
             seqnr = int(line.split(" ")[-4][1:])
 
             if node not in self.results[rate].keys():
                 self.results[rate][node] = {}
 
             self.results[rate][node][timestamp] = seqnr
+
+        elif "Sending packet" in line:
+            node = int(line.split(" ")[-1])
+            timestamp = float(line.split("SN")[0])
+            seqnr = int(line.split(" ")[-3][1:])
+
+            if node not in self.sent_packets[rate].keys():
+                self.sent_packets[rate][node] = {}
+
+            self.sent_packets[rate][node][timestamp] = seqnr
 
        # elif "Lost synchronisation" in line:
        #     pan_identifier = int(line.split(" ")[-1])
@@ -66,19 +78,20 @@ class CastaliaTraceParser:
             # 3319366:203.501130399999SN.node[3].Communication.MAC             Lost synchronisation with PAN 1
 
 
-    def plot(self, flag=False, start=0, stop=0, file_name="arrival_plot-"):
-        for rate in sorted(self.results.keys(), key=int):
+  
+    def plot(self, data, flag=False, start=0, stop=0, file_name="arrival_plot-"):
+        for rate in sorted(data.keys(), key=int):
             xlist = []
             ylist = []
 
-            for node in self.results[rate].keys():
+            for node in data[rate].keys():
                 xdata = []
                 ydata = []
 
                 if start == 0 and stop == 0:
-                   start, stop = min(self.results[rate][node]), max(self.results[rate][node]) 
+                   start, stop = min(data[rate][node]), max(data[rate][node]) 
 
-                for timestamp in sorted(self.results[rate][node], key=float): 
+                for timestamp in sorted(data[rate][node], key=float): 
                     # add check for sane intervals
                     if timestamp >= start and timestamp <= stop:
                         xdata.append(timestamp)
@@ -86,7 +99,7 @@ class CastaliaTraceParser:
                         if flag:
                             ydata.append(node)
                         else:
-                            ydata.append(self.results[rate][node][timestamp])
+                            ydata.append(data[rate][node][timestamp])
 
                 xlist.append(xdata)
                 ylist.append(ydata)
@@ -95,12 +108,13 @@ class CastaliaTraceParser:
             title = "Packet Arrival Time"
             figure, axis = plt.subplots(1)
 
-#            fig = matplotlib.pyplot.gcf()
-#            fig.set_size_inches(38.5,10.5)
+            fig = matplotlib.pyplot.gcf()
+            fig.set_size_inches(38.5,10.5)
 
             for index, value in enumerate(xlist):
                 if len(xlist) > 1:
-                    plt.plot(value, ylist[index], linestyle=' ', marker='o', label="PAN$_"+str(index)+"$")
+                    if index == 1:
+                        plt.plot(value, ylist[index], linestyle=' ', marker='o', label="PAN$_"+str(index)+"$")
                     #plt.plot(value, ylist[index], drawstyle="line", lw=2.5, label="PAN$_"+str(index)+"$")
                     if flag:
                         plt.yticks([-1, 0,1,2])
@@ -153,9 +167,10 @@ def main():
        # the timestamp should be in a t_0,t_1 format, e.g. 0.5,0.7
        if arguments.timestamps != '':
            start, stop = [float(timestamp) for timestamp in arguments.timestamps.split(",")]
-           trace_parser.plot(arguments.dots, start, stop, file_name)
+           trace_parser.plot(trace_parser.results, arguments.dots, start, stop, file_name)
        else:
-           trace_parser.plot(arguments.dots)
+           trace_parser.plot(trace_parser.results, arguments.dots)
+    #       trace_parser.plot(trace_parser.sent_packets, arguments.dots)
 
 
 if __name__ == "__main__":
