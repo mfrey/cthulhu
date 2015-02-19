@@ -10,9 +10,12 @@ import matplotlib.pyplot as plt
 
 from scalarfileparser import ScalarFileParser
 
+
+
 def main():
     results = {}
-    directory = "/home/michael/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference/results/"
+    #directory = "/home/michael/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference/results/"
+    directory = "/home/michael/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference_par2/results/"
 
     # get the data
     for result_file in os.listdir(directory):
@@ -28,17 +31,27 @@ def main():
                 if node not in results[offset]:
                     results[offset][node] = []
 
-                packet_arrival_count = int(data.nodes[node]['arrival:count'])
-                results[offset][node].append(packet_arrival_count)
+            sent_packets = float(data.nodes['2']['sent:count'])
+            arrived_packets = float(data.nodes['0']['arrival:count'])
+            packet_reception_rate = float(arrived_packets/sent_packets)
+            results[offset]['0'].append(packet_reception_rate)
+
+            sent_packets = float(data.nodes['3']['sent:count'])
+            arrived_packets = float(data.nodes['1']['arrival:count'])
+            packet_reception_rate = float(arrived_packets/sent_packets)
+            results[offset]['1'].append(packet_reception_rate)
 
     offsets = sorted(results.keys(), key=float)
     nodes = ['0','1']
 
-    title = "Received Packets vs. Beacon Offset (Scenario: Special)"
+    title = "Packet Reception Rate vs. Beacon Offset (Scenario: Special)"
     xlabel = "beacon offset"
     ylabel = "received packets"
     current_filename = "meh.png"
-    figure, axis = plt.subplots(1)
+    figure, (axis, axis2) = plt.subplots(1, 2, sharey=True)
+    figure.set_size_inches(18.5,10.5)
+
+    print(offsets)
 
     # plot the data
     for node in nodes:
@@ -53,18 +66,35 @@ def main():
              minimum.append(minimum_per_offset)
              maximum_per_offset = np.amax(results[offset][node])
              maximum.append(maximum_per_offset)
-        
 
         network_type = ""
 
         if node == '0':
-            network_type = "csma$_{0}$"
+            #network_type = "csma$_{0}$"
+            network_type = "gts$_{0}$"
         else:
-            network_type = "csma$_{1}$"
+            #network_type = "csma$_{1}$"
+            network_type = "gts$_{1}$"
+
 
         plt.xticks(np.arange(min(offsets), max(offsets)+0.05, 0.05))
+        plt.yticks(np.arange(min(minimum), max(maximum)+0.05, 0.05))
 
-        axis.plot(offsets, average, lw=2, label=network_type)
+        base_line, = axis.plot(offsets, average, lw=2, label=network_type)
+        axis.fill_between(offsets, maximum, minimum, color=base_line.get_color(), alpha=0.5)
+
+        base_line, = axis2.plot(offsets, average, lw=2, label=network_type)
+        axis2.fill_between(offsets, maximum, minimum, color=base_line.get_color(), alpha=0.5)
+
+        # hrm, if that's going to work
+        axis.set_xlim(0,.25) 
+        axis2.set_xlim(.75,1.) 
+
+        axis.spines['right'].set_visible(False)
+        axis2.spines['left'].set_visible(False)
+        axis.yaxis.tick_left()
+        axis.tick_params(labeltop='off') 
+        axis2.yaxis.tick_right()
 
     axis.set_title(title)
     axis.set_xlabel(xlabel)
