@@ -96,7 +96,18 @@ def main():
         axis.tick_params(labeltop='off') 
         axis2.yaxis.tick_right()
 
-    axis.set_title(title)
+    plt.subplots_adjust(wspace=0.15)
+    d = .015
+
+    kwargs = dict(transform=axis.transAxes, color='k', clip_on=False)
+    axis.plot((1-d,1+d),(-d,+d), **kwargs) # top-left diagonal
+    axis.plot((1-d,1+d),(1-d,1+d), **kwargs) # bottom-left diagonal
+
+    kwargs.update(transform=axis2.transAxes) # switch to the bottom axes
+    axis2.plot((-d,d),(-d,+d), **kwargs) # top-right diagonal
+    axis2.plot((-d,d),(1-d,1+d), **kwargs) # bottom-right diagonal
+
+    plt.title(title)
     axis.set_xlabel(xlabel)
     axis.set_ylabel(ylabel)
     axis.grid()
