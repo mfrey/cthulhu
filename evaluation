@@ -1,0 +1,78 @@
+#!/usr/bin/env python2.7
+
+import os
+import numpy as np
+
+import matplotlib
+matplotlib.use('Agg')
+
+import matplotlib.pyplot as plt
+
+from scalarfileparser import ScalarFileParser
+
+def main():
+    results = {}
+    directory = "/home/michael/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference/results/"
+
+    # get the data
+    for result_file in os.listdir(directory):
+        if result_file.endswith(".sca"):
+            parser = ScalarFileParser(directory + result_file)
+            data = parser.read()
+            offset = float(data.parameters['offset'])
+
+            if offset not in results:
+                results[offset] = {}
+
+            for node in data.nodes.keys():
+                if node not in results[offset]:
+                    results[offset][node] = []
+
+                packet_arrival_count = int(data.nodes[node]['arrival:count'])
+                results[offset][node].append(packet_arrival_count)
+
+    offsets = sorted(results.keys(), key=float)
+    nodes = ['0','1']
+
+    title = "Received Packets vs. Beacon Offset (Scenario: Special)"
+    xlabel = "beacon offset"
+    ylabel = "received packets"
+    current_filename = "meh.png"
+    figure, axis = plt.subplots(1)
+
+    # plot the data
+    for node in nodes:
+        average = []
+        minimum = []
+        maximum = []
+
+        for offset in offsets:
+             average_per_offset = np.average(results[offset][node])
+             average.append(average_per_offset)
+             minimum_per_offset = np.amin(results[offset][node])
+             minimum.append(minimum_per_offset)
+             maximum_per_offset = np.amax(results[offset][node])
+             maximum.append(maximum_per_offset)
+        
+
+        network_type = ""
+
+        if node == '0':
+            network_type = "csma$_{0}$"
+        else:
+            network_type = "csma$_{1}$"
+
+        plt.xticks(np.arange(min(offsets), max(offsets)+0.05, 0.05))
+
+        axis.plot(offsets, average, lw=2, label=network_type)
+
+    axis.set_title(title)
+    axis.set_xlabel(xlabel)
+    axis.set_ylabel(ylabel)
+    axis.grid()
+    plt.legend(loc=0)
+    figure.savefig(current_filename)
+    plt.close()
+ 
+if __name__ == "__main__":
+    main()
