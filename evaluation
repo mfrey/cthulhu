@@ -3,9 +3,14 @@
 import os
 import numpy as np
 
+import table
+from math import sqrt
+
 import matplotlib
 #matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
+import pylab
 
 from scalarfileparser import ScalarFileParser
 
@@ -55,17 +60,37 @@ def main():
     nodes = ['0','1']
 
     title = "Packet Reception Rate vs. Beacon Offset"
-    xlabel = "beacon offset"
-    ylabel = "packet reception rate"
-    current_filename = "meh.png"
+    xlabel = "Beacon Offset"
+    ylabel = "Packet Reception Rate"
+    current_filename = "meh.pdf"
 
     figure, (axis, axis2) = plt.subplots(1, 2, sharey=True)
-    figure.set_size_inches(18.5,10.5)
+
+    # in milimeters
+    textwidth = 183.0
+    # convert textwdith to inches
+    inches_per_mm =  0.039370
+    # get aesthetic ratio
+    golden_mean = (sqrt(5)-1.0)/2.0 
+    # width in inches
+    fig_width = textwidth * inches_per_mm
+    # height in inches
+    fig_height = fig_width * golden_mean       
+    fig_size = [fig_width,fig_height*0.5]
+
+    figure.set_size_inches(fig_width,fig_height*0.5)
     plt.set_cmap('cubehelix')
 
-#    with open('data.txt', 'w') as outfile:
-#         print(json.dumps(results, sort_keys=True, indent=4, separators=(',', ': ')))
-#         json.dumps(results, outfile)
+    # update the parameters
+    params = {'backend': 'ps', 
+      'axes.labelsize': 8, 
+      'font.size': 8, 
+      'legend.fontsize': 8, 
+      'xtick.labelsize': 6, 
+      'ytick.labelsize': 6, 
+      'text.usetex': True, 
+      'figure.figsize': fig_size} 
+    pylab.rcParams.update(params)
 
     # plot the data
     for node in nodes:
@@ -90,9 +115,8 @@ def main():
             #network_type = "csma$_{1}$"
             network_type = "gts$_{1}$"
 
-
-        plt.xticks(np.arange(min(offsets), max(offsets)+0.05, 0.05))
-        plt.yticks(np.arange(min(minimum), max(maximum)+0.05, 0.10))
+        plt.xticks(np.arange(min(offsets), max(offsets)+0.05, 0.10))
+        plt.yticks(np.arange(min(minimum), max(maximum)+0.05, 0.20))
 
         base_line, = axis.plot(offsets, average, lw=2, label=network_type)
         axis.fill_between(offsets, maximum, minimum, color=base_line.get_color(), alpha=0.5)
@@ -100,7 +124,6 @@ def main():
         base_line, = axis2.plot(offsets, average, lw=2, label=network_type)
         axis2.fill_between(offsets, maximum, minimum, color=base_line.get_color(), alpha=0.5)
 
-        # hrm, if that's going to work
         axis.set_xlim(0,.25) 
         axis2.set_xlim(.75,1.) 
 
@@ -110,8 +133,8 @@ def main():
         axis.tick_params(labeltop='off') 
         axis2.yaxis.tick_right()
 
-    plt.subplots_adjust(wspace=0.05)
-    d = .015
+    plt.subplots_adjust(wspace=0.10, bottom=0.14)
+    d = .010
 
     kwargs = dict(transform=axis.transAxes, color='k', clip_on=False)
     axis.plot((1-d,1+d),(-d,+d), **kwargs) # top-left diagonal
@@ -121,6 +144,7 @@ def main():
     axis2.plot((-d,d),(-d,+d), **kwargs) # top-right diagonal
     axis2.plot((-d,d),(1-d,1+d), **kwargs) # bottom-right diagonal
 
+    # enable grid
     axis.grid()
     axis2.grid()
 
@@ -130,8 +154,12 @@ def main():
     figure.text(0.5, 0.04, xlabel, ha='center', va='center')
     figure.text(0.06, 0.5, ylabel, ha='center', va='center', rotation='vertical')
 
-    #plt.legend(loc=0)
+    # put the legend inside the figure
+    # plt.legend(loc=0)
     plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    # put the legend above the figure (currently only above one axis)
+    #plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=2, mode="expand", borderaxespad=0.)
+
     figure.savefig(current_filename)
     plt.close()
  
