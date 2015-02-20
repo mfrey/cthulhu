@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 from scalarfileparser import ScalarFileParser
 
-
+import json
 
 def main():
     results = {}
@@ -51,7 +51,10 @@ def main():
     figure, (axis, axis2) = plt.subplots(1, 2, sharey=True)
     figure.set_size_inches(18.5,10.5)
 
-    print(offsets)
+
+    with open('data.txt', 'w') as outfile:
+         print(json.dumps(results, sort_keys=True, indent=4, separators=(',', ': ')))
+         json.dumps(results, outfile)
 
     # plot the data
     for node in nodes:
@@ -107,7 +110,8 @@ def main():
     axis2.plot((-d,d),(-d,+d), **kwargs) # top-right diagonal
     axis2.plot((-d,d),(1-d,1+d), **kwargs) # bottom-right diagonal
 
-    plt.title(title)
+    #plt.title(title)
+    figure.suptitle(title)
     axis.set_xlabel(xlabel)
     axis.set_ylabel(ylabel)
     axis.grid()
