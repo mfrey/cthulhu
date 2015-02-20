@@ -14,23 +14,11 @@ import pylab
 
 from scalarfileparser import ScalarFileParser
 
-#import seaborn as sns
-#
 import json
 
 def main():
-    # set to a colormap suitable for greyscales (e.g. printing)
-    # plt.rcParams['image.cmap'] = 'cubehelix' 
-#    plt.rcParams['image.cmap'] = 'gray' 
-#    plt.set_cmap('cubehelix')
-
     results = {}
-#    sns.set_style("whitegrid")
-    #sns.set_palette("cubehelix")
-#    colors = ["windows blue", "amber", "greyish", "faded green", "dusty purple"]
-#    sns.set_palette(sns.xkcd_palette(colors))
     directory = "/home/frey/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference/results/"
-#    directory = "/home/michael/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference_par2/results/"
 
     # get the data
     for result_file in os.listdir(directory):
