@@ -4,18 +4,28 @@ import os
 import numpy as np
 
 import matplotlib
-matplotlib.use('Agg')
-
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from scalarfileparser import ScalarFileParser
 
+#import seaborn as sns
+#
 import json
 
 def main():
+    # set to a colormap suitable for greyscales (e.g. printing)
+    # plt.rcParams['image.cmap'] = 'cubehelix' 
+#    plt.rcParams['image.cmap'] = 'gray' 
+#    plt.set_cmap('cubehelix')
+
     results = {}
-    #directory = "/home/michael/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference/results/"
-    directory = "/home/michael/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference_par2/results/"
+#    sns.set_style("whitegrid")
+    #sns.set_palette("cubehelix")
+#    colors = ["windows blue", "amber", "greyish", "faded green", "dusty purple"]
+#    sns.set_palette(sns.xkcd_palette(colors))
+    directory = "/home/frey/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference/results/"
+#    directory = "/home/michael/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference_par2/results/"
 
     # get the data
     for result_file in os.listdir(directory):
@@ -44,17 +54,18 @@ def main():
     offsets = sorted(results.keys(), key=float)
     nodes = ['0','1']
 
-    title = "Packet Reception Rate vs. Beacon Offset (Scenario: Special)"
+    title = "Packet Reception Rate vs. Beacon Offset"
     xlabel = "beacon offset"
-    ylabel = "received packets"
+    ylabel = "packet reception rate"
     current_filename = "meh.png"
+
     figure, (axis, axis2) = plt.subplots(1, 2, sharey=True)
     figure.set_size_inches(18.5,10.5)
+    plt.set_cmap('cubehelix')
 
-
-    with open('data.txt', 'w') as outfile:
-         print(json.dumps(results, sort_keys=True, indent=4, separators=(',', ': ')))
-         json.dumps(results, outfile)
+#    with open('data.txt', 'w') as outfile:
+#         print(json.dumps(results, sort_keys=True, indent=4, separators=(',', ': ')))
+#         json.dumps(results, outfile)
 
     # plot the data
     for node in nodes:
@@ -81,7 +92,7 @@ def main():
 
 
         plt.xticks(np.arange(min(offsets), max(offsets)+0.05, 0.05))
-        plt.yticks(np.arange(min(minimum), max(maximum)+0.05, 0.05))
+        plt.yticks(np.arange(min(minimum), max(maximum)+0.05, 0.10))
 
         base_line, = axis.plot(offsets, average, lw=2, label=network_type)
         axis.fill_between(offsets, maximum, minimum, color=base_line.get_color(), alpha=0.5)
@@ -99,7 +110,7 @@ def main():
         axis.tick_params(labeltop='off') 
         axis2.yaxis.tick_right()
 
-    plt.subplots_adjust(wspace=0.15)
+    plt.subplots_adjust(wspace=0.05)
     d = .015
 
     kwargs = dict(transform=axis.transAxes, color='k', clip_on=False)
@@ -110,12 +121,17 @@ def main():
     axis2.plot((-d,d),(-d,+d), **kwargs) # top-right diagonal
     axis2.plot((-d,d),(1-d,1+d), **kwargs) # bottom-right diagonal
 
-    #plt.title(title)
-    figure.suptitle(title)
-    axis.set_xlabel(xlabel)
-    axis.set_ylabel(ylabel)
     axis.grid()
-    plt.legend(loc=0)
+    axis2.grid()
+
+    # title
+    figure.suptitle(title)  
+    # labels
+    figure.text(0.5, 0.04, xlabel, ha='center', va='center')
+    figure.text(0.06, 0.5, ylabel, ha='center', va='center', rotation='vertical')
+
+    #plt.legend(loc=0)
+    plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
     figure.savefig(current_filename)
     plt.close()
  
