@@ -118,7 +118,12 @@ def main():
 
         # let's set the network type for the labels
         network_type = configuration["network-properties"][node] + "$_{" + node + "}$"
-
+        
+        plt.sca(axis)
+        plt.xticks(np.arange(min(offsets), max(offsets)+0.05, 0.10))
+        plt.yticks(np.arange(min(minimum), max(maximum)+0.05, 0.20))
+        
+        plt.sca(axis2)
         plt.xticks(np.arange(min(offsets), max(offsets)+0.05, 0.10))
         plt.yticks(np.arange(min(minimum), max(maximum)+0.05, 0.20))
 
@@ -150,7 +155,7 @@ def main():
         axis.tick_params(labeltop='off') 
         axis2.yaxis.tick_right()
 
-    plt.subplots_adjust(wspace=0.10, bottom=0.14)
+    plt.subplots_adjust(wspace=0.10, bottom=0.14, left=0.10, right=0.85)
     d = .010
 
     kwargs = dict(transform=axis.transAxes, color='k', clip_on=False)
@@ -169,11 +174,11 @@ def main():
     figure.suptitle(title)  
     # labels
     figure.text(0.5, 0.04, xlabel, ha='center', va='center')
-    figure.text(0.06, 0.5, ylabel, ha='center', va='center', rotation='vertical')
+    figure.text(0.04, 0.5, ylabel, ha='center', va='center', rotation='vertical')
 
     # put the legend inside the figure
     # plt.legend(loc=0)
-    plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    plt.legend(bbox_to_anchor=(1.13, 1), loc=2, borderaxespad=0.)
     # put the legend above the figure (currently only above one axis)
     #plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=2, mode="expand", borderaxespad=0.)
 
