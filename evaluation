@@ -26,7 +26,6 @@ def main():
         configuration = json.load(configuration_file)
 
     results = {}
-    directory = "/home/frey/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference/results/"
     # get the directory to parse from the json file
     directory = configuration["directory"]
     # same goes for the title, xlabel, and ylabel of the plot
