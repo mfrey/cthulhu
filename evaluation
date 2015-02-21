@@ -1,9 +1,10 @@
 #!/usr/bin/env python2.7
 
 import os
+import sys
 import numpy as np
 
-import table
+#import table
 from math import sqrt
 
 import matplotlib
@@ -15,10 +16,25 @@ import pylab
 from scalarfileparser import ScalarFileParser
 
 import json
+import pprint
 
 def main():
+    if len(sys.argv) != 2:
+        sys.exit(1)
+
+    with open(sys.argv[1]) as configuration_file:
+        configuration = json.load(configuration_file)
+
     results = {}
     directory = "/home/frey/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference/results/"
+    # get the directory to parse from the json file
+    directory = configuration["directory"]
+    # same goes for the title, xlabel, and ylabel of the plot
+    title  = configuration["plot"]["title"]
+    xlabel = configuration["plot"]["xlabel"]
+    ylabel = configuration["plot"]["ylabel"]
+    # set the filename of the plot
+    current_filename = configuration["plot"]["file"]
 
     # get the data
     for result_file in os.listdir(directory):
@@ -46,11 +62,6 @@ def main():
 
     offsets = sorted(results.keys(), key=float)
     nodes = ['0','1']
-
-    title = "Packet Reception Rate vs. Beacon Offset"
-    xlabel = "Beacon Offset"
-    ylabel = "Packet Reception Rate"
-    current_filename = "meh.pdf"
 
     figure, (axis, axis2) = plt.subplots(1, 2, sharey=True)
 
