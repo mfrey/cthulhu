@@ -49,6 +49,7 @@ def main():
                 if node not in results[offset]:
                     results[offset][node] = []
 
+            # compute the packet reception rate = received packets/sent packets
             sent_packets = float(data.nodes['2']['sent:count'])
             arrived_packets = float(data.nodes['0']['arrival:count'])
             packet_reception_rate = float(arrived_packets/sent_packets)
@@ -59,9 +60,12 @@ def main():
             packet_reception_rate = float(arrived_packets/sent_packets)
             results[offset]['1'].append(packet_reception_rate)
 
+    # sort the offsets
     offsets = sorted(results.keys(), key=float)
+    # define our coordinators
     nodes = ['0','1']
 
+    # we are going to have a plot with broken axes
     figure, (axis, axis2) = plt.subplots(1, 2, sharey=True)
 
     # in milimeters
@@ -104,14 +108,8 @@ def main():
              maximum_per_offset = np.amax(results[offset][node])
              maximum.append(maximum_per_offset)
 
-        network_type = ""
-
-        if node == '0':
-            #network_type = "csma$_{0}$"
-            network_type = "gts$_{0}$"
-        else:
-            #network_type = "csma$_{1}$"
-            network_type = "gts$_{1}$"
+        # let's set the network type for the labels
+        network_type = configuration["network-properties"][node] + "$_{" + node + "}$"
 
         plt.xticks(np.arange(min(offsets), max(offsets)+0.05, 0.10))
         plt.yticks(np.arange(min(minimum), max(maximum)+0.05, 0.20))
