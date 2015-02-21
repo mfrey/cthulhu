@@ -1,10 +1,15 @@
 {
     "directory" : "/home/michael/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference/results/",
     "plot" : {
-        "title" : "Packet Reception Rate vs. Beacon Offset (Scenario: CSMA/CSMA)",
+        "title" : "Packet Reception Rate vs. Beacon Offset (Scenario: GTS/GTS)",
         "xlabel" : "Beacon Offset",
         "ylabel" : "Packet Reception Rate",
         "file" : "csma-csma.pdf",
         "std" : true
+        "file" : "gts-gts.pdf"
+    },
+    "network-properties" : {
+        "0" : "csma",
+        "1" : "gts"
     }
 }
