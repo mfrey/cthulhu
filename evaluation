@@ -92,6 +92,7 @@ def main():
       'ytick.labelsize': 6, 
       'text.usetex': True, 
       'figure.figsize': fig_size} 
+    
     pylab.rcParams.update(params)
 
     # plot the data
@@ -99,14 +100,21 @@ def main():
         average = []
         minimum = []
         maximum = []
+        standev = []
 
         for offset in offsets:
-             average_per_offset = np.average(results[offset][node])
+             #average_per_offset = np.average(results[offset][node])
+             average_per_offset = np.mean(results[offset][node]) 
              average.append(average_per_offset)
+
              minimum_per_offset = np.amin(results[offset][node])
              minimum.append(minimum_per_offset)
+
              maximum_per_offset = np.amax(results[offset][node])
              maximum.append(maximum_per_offset)
+
+             std_per_offset = np.std(results[offset][node])
+             standev.append(std_per_offset)
 
         # let's set the network type for the labels
         network_type = configuration["network-properties"][node] + "$_{" + node + "}$"
@@ -114,11 +122,24 @@ def main():
         plt.xticks(np.arange(min(offsets), max(offsets)+0.05, 0.10))
         plt.yticks(np.arange(min(minimum), max(maximum)+0.05, 0.20))
 
+        # test
+        average = np.array(average)
+        standev = np.array(standev)
+
+
+        # let's see if we want to plot mean +/- std or mean + max and mean - min
         base_line, = axis.plot(offsets, average, lw=2, label=network_type)
-        axis.fill_between(offsets, maximum, minimum, color=base_line.get_color(), alpha=0.5)
+        if configuration["plot"]["std"]:
+             axis.fill_between(offsets, average+standev, average-standev, color=base_line.get_color(), alpha=0.5)
+        else:
+             axis.fill_between(offsets, maximum, minimum, color=base_line.get_color(), alpha=0.5)
 
         base_line, = axis2.plot(offsets, average, lw=2, label=network_type)
-        axis2.fill_between(offsets, maximum, minimum, color=base_line.get_color(), alpha=0.5)
+        if configuration["plot"]["std"]:
+            axis2.fill_between(offsets, average+standev, average-standev, color=base_line.get_color(), alpha=0.5)
+        else:
+            axis2.fill_between(offsets, maximum, minimum, color=base_line.get_color(), alpha=0.5)
+
 
         axis.set_xlim(0,.25) 
         axis2.set_xlim(.75,1.) 

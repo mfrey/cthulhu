@@ -4,6 +4,7 @@
         "title" : "Packet Reception Rate vs. Beacon Offset (Scenario: CSMA/CSMA)",
         "xlabel" : "Beacon Offset",
         "ylabel" : "Packet Reception Rate",
-        "file" : "csma-csma.pdf"
+        "file" : "csma-csma.pdf",
+        "std" : true
     }
 }
