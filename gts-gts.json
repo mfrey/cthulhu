@@ -4,12 +4,11 @@
         "title" : "Packet Reception Rate vs. Beacon Offset (Scenario: GTS/GTS)",
         "xlabel" : "Beacon Offset",
         "ylabel" : "Packet Reception Rate",
-        "file" : "csma-csma.pdf",
-        "std" : true
-        "file" : "gts-gts.pdf"
+        "std" : false,
+        "file" : "gts-gts.png"
     },
     "network-properties" : {
-        "0" : "csma",
+        "0" : "gts",
         "1" : "gts"
     }
 }
