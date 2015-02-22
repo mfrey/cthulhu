@@ -1,11 +1,11 @@
 {
-    "directory" : "/home/michael/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference/results/",
+    "directory" : "/home/michael/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference/gts-gts/",
     "plot" : {
         "title" : "Packet Reception Rate vs. Beacon Offset (Scenario: GTS/GTS)",
         "xlabel" : "Beacon Offset",
         "ylabel" : "Packet Reception Rate",
         "std" : false,
-        "file" : "gts-gts.png"
+        "file" : "gts-gts.pdf"
     },
     "network-properties" : {
         "0" : "gts",
