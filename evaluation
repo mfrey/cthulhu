@@ -19,6 +19,7 @@ import json
 import pprint
 
 def main():
+    # invocation of the script is always ./evaluation example.json
     if len(sys.argv) != 2:
         sys.exit(1)
 
@@ -66,7 +67,7 @@ def main():
     nodes = ['0','1']
 
     # we are going to have a plot with broken axes
-    figure, (axis, axis2) = plt.subplots(1, 2, sharey=True)
+    figure, (axis1, axis2) = plt.subplots(1, 2, sharey=True)
 
     # in milimeters
     textwidth = 183.0
@@ -83,6 +84,8 @@ def main():
     figure.set_size_inches(fig_width,fig_height*0.5)
     plt.set_cmap('cubehelix')
 
+    colors = ["#FF9900", "#0A50A7", "#00A3A7"]
+
     # update the parameters
     params = {'backend': 'ps', 
       'axes.labelsize': 8, 
@@ -95,6 +98,8 @@ def main():
     
     pylab.rcParams.update(params)
 
+    #colors = [(255/255, 153/255, 0), (10/255, 80/255, 167/255), (0, 153/255, 167/255)]
+
     # plot the data
     for node in nodes:
         average = []
@@ -103,71 +108,71 @@ def main():
         standev = []
 
         for offset in offsets:
-             #average_per_offset = np.average(results[offset][node])
-             average_per_offset = np.mean(results[offset][node]) 
-             average.append(average_per_offset)
+            #average_per_offset = np.average(results[offset][node])
+            average_per_offset = np.mean(results[offset][node]) 
+            average.append(average_per_offset)
 
-             minimum_per_offset = np.amin(results[offset][node])
-             minimum.append(minimum_per_offset)
+            minimum_per_offset = np.amin(results[offset][node])
+            minimum.append(minimum_per_offset)
 
-             maximum_per_offset = np.amax(results[offset][node])
-             maximum.append(maximum_per_offset)
+            maximum_per_offset = np.amax(results[offset][node])
+            maximum.append(maximum_per_offset)
 
-             std_per_offset = np.std(results[offset][node])
-             standev.append(std_per_offset)
+            std_per_offset = np.std(results[offset][node])
+            standev.append(std_per_offset)
 
         # let's set the network type for the labels
         network_type = configuration["network-properties"][node] + "$_{" + node + "}$"
         
-        plt.sca(axis)
-        plt.xticks(np.arange(min(offsets), max(offsets)+0.05, 0.10))
-        plt.yticks(np.arange(min(minimum), max(maximum)+0.05, 0.20))
-        
-        plt.sca(axis2)
-        plt.xticks(np.arange(min(offsets), max(offsets)+0.05, 0.10))
-        plt.yticks(np.arange(min(minimum), max(maximum)+0.05, 0.20))
-
         # test
         average = np.array(average)
         standev = np.array(standev)
 
+        for axis in figure.axes:
+            plt.sca(axis)
+            plt.xticks(np.arange(min(offsets), max(offsets)+0.05, 0.10))
+            plt.yticks(np.arange(min(minimum), max(maximum)+0.05, 0.20))
 
         # let's see if we want to plot mean +/- std or mean + max and mean - min
-        base_line, = axis.plot(offsets, average, lw=2, label=network_type)
+        base_line, = axis1.plot(offsets, average, color=colors[int(node)], lw=2, label=network_type)
         if configuration["plot"]["std"]:
-             axis.fill_between(offsets, average+standev, average-standev, color=base_line.get_color(), alpha=0.5)
+             axis1.fill_between(offsets, average+standev, average-standev,
+                     color=colors[int(node)], alpha=0.5)
         else:
-             axis.fill_between(offsets, maximum, minimum, color=base_line.get_color(), alpha=0.5)
+             axis1.fill_between(offsets, maximum, minimum,
+                     color=colors[int(node)], alpha=0.5)
 
-        base_line, = axis2.plot(offsets, average, lw=2, label=network_type)
+        base_line, = axis2.plot(offsets, average, color=colors[int(node)], lw=2, label=network_type)
         if configuration["plot"]["std"]:
-            axis2.fill_between(offsets, average+standev, average-standev, color=base_line.get_color(), alpha=0.5)
+            axis2.fill_between(offsets, average+standev, average-standev,
+                    color=colors[int(node)], alpha=0.5)
         else:
-            axis2.fill_between(offsets, maximum, minimum, color=base_line.get_color(), alpha=0.5)
+            axis2.fill_between(offsets, maximum, minimum,
+                    color=colors[int(node)], alpha=0.5)
 
 
-        axis.set_xlim(0,.25) 
+        axis1.set_xlim(0,.25) 
         axis2.set_xlim(.75,1.) 
 
-        axis.spines['right'].set_visible(False)
+        axis1.spines['right'].set_visible(False)
         axis2.spines['left'].set_visible(False)
-        axis.yaxis.tick_left()
-        axis.tick_params(labeltop='off') 
+        axis1.yaxis.tick_left()
+        axis1.tick_params(labeltop='off') 
         axis2.yaxis.tick_right()
 
     plt.subplots_adjust(wspace=0.10, bottom=0.14, left=0.10, right=0.85)
     d = .010
 
-    kwargs = dict(transform=axis.transAxes, color='k', clip_on=False)
-    axis.plot((1-d,1+d),(-d,+d), **kwargs) # top-left diagonal
-    axis.plot((1-d,1+d),(1-d,1+d), **kwargs) # bottom-left diagonal
+    kwargs = dict(transform=axis1.transAxes, color='k', clip_on=False)
+    axis1.plot((1-d,1+d),(-d,+d), **kwargs) # top-left diagonal
+    axis1.plot((1-d,1+d),(1-d,1+d), **kwargs) # bottom-left diagonal
 
     kwargs.update(transform=axis2.transAxes) # switch to the bottom axes
     axis2.plot((-d,d),(-d,+d), **kwargs) # top-right diagonal
     axis2.plot((-d,d),(1-d,1+d), **kwargs) # bottom-right diagonal
 
     # enable grid
-    axis.grid()
+    axis1.grid()
     axis2.grid()
 
     # title
