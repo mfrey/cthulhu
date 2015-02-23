@@ -29,6 +29,10 @@ def main():
     results = {}
     # get the directory to parse from the json file
     directory = configuration["directory"]
+
+    if not directory.endswith("/"):
+        directory = directory + "/"
+
     # same goes for the title, xlabel, and ylabel of the plot
     title  = configuration["plot"]["title"]
     xlabel = configuration["plot"]["xlabel"]
