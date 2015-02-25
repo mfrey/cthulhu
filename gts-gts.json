@@ -5,7 +5,7 @@
         "xlabel" : "Beacon Offset",
         "ylabel" : "Packet Reception Rate",
         "std" : false,
-        "file" : "gts-gts.pdf"
+        "file" : "gts-gts.png"
     },
     "network-properties" : {
         "0" : "gts",

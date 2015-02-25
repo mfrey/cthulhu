@@ -1,7 +1,7 @@
 {
     "directory" : "/home/michael/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference/easy/",
     "plot" : {
-        "title" : "Packet Reception Rate vs. Beacon Offset (Scenario: CSMA/CSMA)",
+        "title" : "Packet Reception Rate vs. Beacon Offset (Scenario: Easy)",
         "xlabel" : "Beacon Offset",
         "ylabel" : "Packet Reception Rate",
         "std" : false,

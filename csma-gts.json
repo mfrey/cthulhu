@@ -5,7 +5,7 @@
         "xlabel" : "Beacon Offset",
         "ylabel" : "Packet Reception Rate",
         "std" : false,
-        "file" : "csma-csma.pdf"
+        "file" : "csma-gts.pdf"
     },
     "network-properties" : {
         "0" : "csma",
