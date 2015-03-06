@@ -70,8 +70,10 @@ def main():
     # define our coordinators
     nodes = ['0','1']
 
+    print(offsets)
+
     # we are going to have a plot with broken axes
-    figure, (axis1, axis2) = plt.subplots(1, 2, sharey=True)
+    figure, axis = plt.subplots(1)
 
     # in milimeters
     textwidth = 183.0
@@ -132,58 +134,26 @@ def main():
         average = np.array(average)
         standev = np.array(standev)
 
-        for axis in figure.axes:
-            plt.sca(axis)
-            plt.xticks(np.arange(min(offsets), max(offsets)+0.05, 0.10))
-            plt.yticks(np.arange(min(minimum), max(maximum)+0.05, 0.20))
+        plt.sca(axis)
+        plt.xticks(np.arange(min(offsets), max(offsets)+0.05, 0.10))
+        plt.yticks(np.arange(min(minimum), max(maximum)+0.05, 0.20))
 
         # let's see if we want to plot mean +/- std or mean + max and mean - min
-        base_line, = axis1.plot(offsets, average, color=colors[int(node)], lw=2, label=network_type)
+        base_line, = axis.plot(offsets, average, color=colors[int(node)], lw=2, label=network_type)
         if configuration["plot"]["std"]:
-             axis1.fill_between(offsets, average+standev, average-standev,
+             axis.fill_between(offsets, average+standev, average-standev,
                      color=colors[int(node)], alpha=0.5)
         else:
-             axis1.fill_between(offsets, maximum, minimum,
+             axis.fill_between(offsets, maximum, minimum,
                      color=colors[int(node)], alpha=0.5)
-
-        base_line, = axis2.plot(offsets, average, color=colors[int(node)], lw=2, label=network_type)
-        if configuration["plot"]["std"]:
-            axis2.fill_between(offsets, average+standev, average-standev,
-                    color=colors[int(node)], alpha=0.5)
-        else:
-            axis2.fill_between(offsets, maximum, minimum,
-                    color=colors[int(node)], alpha=0.5)
-
-
-        axis1.set_xlim(0,.25) 
-        axis2.set_xlim(.75,1.) 
-
-        axis1.spines['right'].set_visible(False)
-        axis2.spines['left'].set_visible(False)
-        axis1.yaxis.tick_left()
-        axis1.tick_params(labeltop='off') 
-        axis2.yaxis.tick_right()
-
-    plt.subplots_adjust(wspace=0.10, bottom=0.14, left=0.10, right=0.85)
-    d = .010
-
-    kwargs = dict(transform=axis1.transAxes, color='k', clip_on=False)
-    axis1.plot((1-d,1+d),(-d,+d), **kwargs) # top-left diagonal
-    axis1.plot((1-d,1+d),(1-d,1+d), **kwargs) # bottom-left diagonal
-
-    kwargs.update(transform=axis2.transAxes) # switch to the bottom axes
-    axis2.plot((-d,d),(-d,+d), **kwargs) # top-right diagonal
-    axis2.plot((-d,d),(1-d,1+d), **kwargs) # bottom-right diagonal
-
     # enable grid
-    axis1.grid()
-    axis2.grid()
+    axis.grid()
 
     # title
-    figure.suptitle(title)  
+    plt.title(title)  
     # labels
-    figure.text(0.5, 0.04, xlabel, ha='center', va='center')
-    figure.text(0.04, 0.5, ylabel, ha='center', va='center', rotation='vertical')
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
 
     # put the legend inside the figure
     # plt.legend(loc=0)
