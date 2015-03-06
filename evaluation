@@ -46,6 +46,13 @@ def main():
             parser = ScalarFileParser(directory + result_file)
             data = parser.read()
             offset = float(data.parameters['offset'])
+            # let's write the offset in ms not in percent
+            offset = offset * 983.04
+
+            if "0.75" in result_file:
+                offset =  -1 * (983.04 - offset)
+            #else:
+            #    offset = 983.04 - offset
 
             if offset not in results:
                 results[offset] = {}
@@ -134,9 +141,9 @@ def main():
         average = np.array(average)
         standev = np.array(standev)
 
-        plt.sca(axis)
-        plt.xticks(np.arange(min(offsets), max(offsets)+0.05, 0.10))
-        plt.yticks(np.arange(min(minimum), max(maximum)+0.05, 0.20))
+#        plt.sca(axis)
+        #plt.xticks(np.arange(min(offsets), max(offsets)+0.05, 10))
+        plt.yticks(np.arange(min(minimum), max(maximum)+0.25, 0.20))
 
         # let's see if we want to plot mean +/- std or mean + max and mean - min
         base_line, = axis.plot(offsets, average, color=colors[int(node)], lw=2, label=network_type)
