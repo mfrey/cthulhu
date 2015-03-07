@@ -83,19 +83,18 @@ def main():
     figure, axis = plt.subplots(1)
 
     # in milimeters
-    textwidth = 183.0
+    #textwidth = 183.0
     # convert textwdith to inches
-    inches_per_mm =  0.039370
+    #inches_per_mm =  0.039370
     # get aesthetic ratio
-    golden_mean = (sqrt(5)-1.0)/2.0 
+    #golden_mean = (sqrt(5)-1.0)/2.0 
     # width in inches
-    fig_width = textwidth * inches_per_mm
+    #fig_width = textwidth * inches_per_mm
     # height in inches
-    fig_height = fig_width * golden_mean       
-    fig_size = [fig_width,fig_height*0.5]
-
-    figure.set_size_inches(fig_width,fig_height*0.5)
-    plt.set_cmap('cubehelix')
+    #fig_height = fig_width * golden_mean       
+    #fig_size = [fig_width,fig_height*0.5]
+    #figure.set_size_inches(fig_width,fig_height*0.5)
+    #plt.set_cmap('cubehelix')
 
     colors = ["#FF9900", "#0A50A7", "#00A3A7"]
 
@@ -106,8 +105,8 @@ def main():
       'legend.fontsize': 8, 
       'xtick.labelsize': 6, 
       'ytick.labelsize': 6, 
-      'text.usetex': True, 
-      'figure.figsize': fig_size} 
+      'text.usetex': True}
+     # 'figure.figsize': fig_size} 
     
     pylab.rcParams.update(params)
 
@@ -142,7 +141,7 @@ def main():
         standev = np.array(standev)
 
 #        plt.sca(axis)
-        #plt.xticks(np.arange(min(offsets), max(offsets)+0.05, 10))
+        plt.xticks(np.arange(min(offsets), max(offsets)+0.05, 10))
         plt.yticks(np.arange(min(minimum), max(maximum)+0.25, 0.20))
 
         # let's see if we want to plot mean +/- std or mean + max and mean - min
