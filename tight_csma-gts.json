@@ -8,8 +8,8 @@
         "file" : "tight.pdf"
     },
     "network-properties" : {
-        "0" : "csma",
-        "1" : "gts",
+        "0" : "CSMA",
+        "1" : "GTS",
         "index" : false
     }
 }
