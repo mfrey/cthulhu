@@ -1,0 +1,14 @@
+{
+    "directory" : "/home/michael/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference/results_char_interference",
+    "plot" : {
+        "title" : "Reception Probability: Frame -73.2 dBm, Interferer -76.8 dBm",
+        "xlabel" : "Interference Time",
+        "ylabel" : "Reception Probability",
+        "std" : false,
+        "file" : "prr.pdf"
+    },
+    "network-properties" : {
+        "0" : "GTS 1",
+        "index" : false
+    }
+}
