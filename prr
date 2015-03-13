@@ -1,0 +1,204 @@
+#!/usr/bin/env python2.7
+
+import os
+import sys
+import numpy as np
+
+#import table
+from math import sqrt
+
+import matplotlib
+#matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+import pylab
+
+from scalarfileparser import ScalarFileParser
+
+import json
+import pprint
+
+def main():
+    # invocation of the script is always ./evaluation example.json
+    if len(sys.argv) != 2:
+        sys.exit(1)
+
+    with open(sys.argv[1]) as configuration_file:
+        configuration = json.load(configuration_file)
+
+    results = {}
+    # get the directory to parse from the json file
+    directory = configuration["directory"]
+
+    if not directory.endswith("/"):
+        directory = directory + "/"
+
+    # same goes for the title, xlabel, and ylabel of the plot
+    title  = configuration["plot"]["title"]
+    xlabel = configuration["plot"]["xlabel"]
+    ylabel = configuration["plot"]["ylabel"]
+    # set the filename of the plot
+    current_filename = configuration["plot"]["file"]
+
+    # get the data
+    for result_file in os.listdir(directory):
+        if result_file.endswith(".sca"):
+            parser = ScalarFileParser(directory + result_file)
+            data = parser.read()
+            offset = float(data.parameters['offset'])
+            offset = offset * 983.04
+
+            if offset == 3.44064:
+                offset = 623
+            elif offset == 3.538944:
+                offset = 525
+            elif offset == 3.637248:
+                offset = 427
+            elif offset ==3.7355519999999998:
+                offset = 329
+            elif offset == 3.8338559999999995:
+                offset = 230
+            elif offset == 3.93216:
+                offset = 132
+            elif offset == 4.030464:
+                offset = 33
+            elif offset == 4.128768:
+                offset = 0 
+            else:
+                print "unknown offset"
+
+            offset = offset * 0.25
+
+            if offset not in results:
+                results[offset] = {}
+
+            for node in data.nodes.keys():
+                if node not in results[offset]:
+                    results[offset][node] = []
+
+            # compute the packet reception rate = received packets/sent packets
+            sent_packets = float(data.nodes['2']['sent:count'])
+            arrived_packets = float(data.nodes['0']['arrival:count'])
+            packet_reception_rate = float(arrived_packets/sent_packets)
+            results[offset]['0'].append(packet_reception_rate)
+
+            sent_packets = float(data.nodes['3']['sent:count'])
+            arrived_packets = float(data.nodes['1']['arrival:count'])
+            packet_reception_rate = float(arrived_packets/sent_packets)
+            results[offset]['1'].append(packet_reception_rate)
+
+    # sort the offsets
+    offsets = sorted(results.keys(), key=float)
+    # define our coordinators
+    nodes = ['0']
+
+    print(offsets)
+
+    # we are going to have a plot with broken axes
+    figure, axis = plt.subplots(1)
+    plt.subplots_adjust(bottom=0.2, top=0.8)
+
+    # in milimeters
+    textwidth = 183.0
+    # convert textwdith to inches
+    inches_per_mm =  0.039370
+    # get aesthetic ratio
+    golden_mean = (sqrt(5)-1.0)/2.0 
+    # width in inches
+    fig_width = textwidth * inches_per_mm
+    # height in inches
+    fig_height = fig_width * golden_mean       
+    fig_size = [fig_width,fig_height]
+    figure.set_size_inches(fig_width,fig_height)
+    #plt.set_cmap('cubehelix')
+
+    #colors = ["#FF9900", "#0A50A7", "#00A3A7"]
+    colors = ["#00A3A7"]
+
+    # update the parameters
+    params = {'backend': 'ps', 
+      'axes.labelsize': 20, 
+      'font.size': 20, 
+      'legend.fontsize': 20, 
+      'xtick.labelsize': 20, 
+      'ytick.labelsize': 20, 
+      'text.usetex': True,
+      'figure.figsize': fig_size} 
+    
+    pylab.rcParams.update(params)
+
+    # plot the data
+    for node in nodes:
+        average = []
+        minimum = []
+        maximum = []
+        standev = []
+
+        for offset in offsets:
+            #average_per_offset = np.average(results[offset][node])
+            average_per_offset = np.mean(results[offset][node]) 
+            average.append(average_per_offset)
+
+            minimum_per_offset = np.amin(results[offset][node])
+            minimum.append(minimum_per_offset)
+
+            maximum_per_offset = np.amax(results[offset][node])
+            maximum.append(maximum_per_offset)
+
+            std_per_offset = np.std(results[offset][node])
+            standev.append(std_per_offset)
+
+        # let's set the network type for the labels
+        network_type = configuration["network-properties"][node] 
+
+        # should we print the coordinators of the network
+        if configuration["network-properties"]["index"]:
+            network_type = network_type +  "$_{" + node + "}$"
+        
+        # test
+        average = np.array(average)
+        standev = np.array(standev)
+
+        # xlim 
+        plt.xlim(min(offsets)-0.05, max(offsets)+0.05)
+        
+        round10 = lambda x: 10 * int(x / 10.)
+
+#        plt.sca(axis)
+#        plt.xticks(np.arange(min(offsets), max(offsets)))
+        #plt.xticks(np.arange(round10(0), round10(800) + 1, 100))
+        plt.xticks([0, 50, 100, 150])
+
+        plt.yticks(np.arange(min(minimum), max(maximum)+0.25, 0.20))
+
+        # let's see if we want to plot mean +/- std or mean + max and mean - min
+        base_line, = axis.plot(offsets, average, color=colors[int(node)], lw=2, label=network_type)
+        #if configuration["plot"]["std"]:
+        #     axis.fill_between(offsets, average+standev, average-standev,
+        #             color=colors[int(node)], alpha=0.3)
+        #else:
+        #     axis.fill_between(offsets, maximum, minimum,
+        #             color=colors[int(node)], alpha=0.3)
+    # enable grid
+    axis.grid()
+
+    # title: plt.title(title)  
+    # labels
+    figure.text(0.5, 0.04, xlabel, ha='center', va='center')
+    figure.text(0.04, 0.5, ylabel, ha='center', va='center', rotation='vertical')
+    xlabel = xlabel + " ($\mu$s)"
+    #plt.xlabel(xlabel)
+    #plt.ylabel(ylabel)
+
+    # put the legend inside the figure
+    # plt.legend(loc=0)
+    # plt.legend(bbox_to_anchor=(1.13, 1), loc=2, borderaxespad=0.)
+    # put the legend above the figure (currently only above one axis)
+    #plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=2, mode="expand", borderaxespad=0.)
+    #plt.legend(bbox_to_anchor=(0., 1.00, 1., .102), loc=3, ncol=2, borderaxespad=0., frameon=False)
+
+    figure.savefig(current_filename)
+    plt.close()
+ 
+if __name__ == "__main__":
+    main()

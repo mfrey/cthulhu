@@ -1,15 +1,15 @@
 {
-    "directory" : "/home/michael/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference/tight_csma-csma",
+    "directory" : "/home/michael/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference/tight_gts-gts",
     "plot" : {
         "title" : "Packet Reception Rate vs. Beacon Offset (Scenario: Tight)",
         "xlabel" : "beacon offset [ms]",
         "ylabel" : "packet reception rate",
         "std" : false,
-        "file" : "tight_csma-csma.pdf"
+        "file" : "tight_gts_gts.pdf"
     },
     "network-properties" : {
-        "0" : "CSMA 0",
-        "1" : "CSMA 1",
+        "0" : "GTS 0",
+        "1" : "GTS 1",
         "index" : false
     }
 }
