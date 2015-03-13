@@ -93,19 +93,19 @@ def main():
     fig_width = textwidth * inches_per_mm
     # height in inches
     fig_height = fig_width * golden_mean       
-    fig_size = [fig_width,fig_height*0.5]
-    figure.set_size_inches(fig_width,fig_height*0.5)
+    fig_size = [fig_width,fig_height]
+    figure.set_size_inches(fig_width,fig_height)
     #plt.set_cmap('cubehelix')
 
     colors = ["#FF9900", "#0A50A7", "#00A3A7"]
 
     # update the parameters
     params = {'backend': 'ps', 
-      'axes.labelsize': 10, 
-      'font.size': 12, 
-      'legend.fontsize': 12, 
-      'xtick.labelsize': 10, 
-      'ytick.labelsize': 10, 
+      'axes.labelsize': 12, 
+      'font.size': 14, 
+      'legend.fontsize': 14, 
+      'xtick.labelsize': 12, 
+      'ytick.labelsize': 12, 
       'text.usetex': True,
       'figure.figsize': fig_size} 
     
@@ -147,22 +147,22 @@ def main():
 
         # xlim 
         plt.xlim(min(offsets)-0.05, max(offsets)+0.05)
-        
+        plt.ylim(min(minimum)-0.05, max(minimum)+0.05)
+
         round10 = lambda x: 10 * int(x / 10.)
 
-#        plt.sca(axis)
-        #plt.xticks(np.arange(min(offsets), max(offsets), 10))
-        plt.xticks(np.arange(round10(min(offsets)), round10(max(offsets)) + 1, 10))
-        plt.yticks(np.arange(min(minimum), max(maximum)+0.25, 0.20))
+ #       plt.xticks(np.arange(round10(min(offsets)), round10(max(offsets)) + 1, 60))
+        plt.xticks(np.arange(round10(min(offsets)), round10(max(offsets)) + 1, 20))
+        plt.yticks(np.arange(min(minimum), max(maximum)+0.10, 0.20))
 
         # let's see if we want to plot mean +/- std or mean + max and mean - min
         base_line, = axis.plot(offsets, average, color=colors[int(node)], lw=2, label=network_type)
         if configuration["plot"]["std"]:
              axis.fill_between(offsets, average+standev, average-standev,
-                     color=colors[int(node)], alpha=0.5)
+                     color=colors[int(node)], alpha=0.2)
         else:
              axis.fill_between(offsets, maximum, minimum,
-                     color=colors[int(node)], alpha=0.5)
+                     color=colors[int(node)], alpha=0.2)
     # enable grid
     axis.grid()
 
@@ -170,8 +170,6 @@ def main():
     # labels
     figure.text(0.5, 0.04, xlabel, ha='center', va='center')
     figure.text(0.04, 0.5, ylabel, ha='center', va='center', rotation='vertical')
-#    plt.xlabel(xlabel)
-#    plt.ylabel(ylabel)
 
     # put the legend inside the figure
     # plt.legend(loc=0)
