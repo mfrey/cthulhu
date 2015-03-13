@@ -1,0 +1,15 @@
+{
+    "directory" : "/home/michael/Desktop/Projekte/SemInt/Castalia-master/Castalia/Simulations/802154_interference/very-easy_gts-gts/",
+    "plot" : {
+        "title" : "Packet Reception Rate vs. Beacon Offset (Scenario: CSMA/CSMA)",
+        "xlabel" : "beacon offset [ms]",
+        "ylabel" : "packet reception rate",
+        "std" : false,
+        "file" : "very-easy_gts_gts.pdf"
+    },
+    "network-properties" : {
+        "0" : "GTS 0",
+        "1" : "GTS 1",
+        "index" : false
+    }
+}
