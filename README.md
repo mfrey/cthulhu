@@ -1,5 +1,6 @@
 cthulhu
 -------
+This repository contains several scripts for running experiments using the [Castalia](https://castalia.forge.nicta.com.au/index.php/en/) network simulator and evaluating the result files. 
 
 ### Installation from git
 
